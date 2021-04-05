@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class AcceptedClientHandler implements Runnable {
     private Socket client;
@@ -39,11 +40,15 @@ public class AcceptedClientHandler implements Runnable {
             server.enterChat(userChatName, this);
 
             while (!client.isClosed()) {
-                String msg = in.readLine();
-                if (msg == null) {
+
+                String msg = "";
+                try {
+                   msg = in.readLine();
+                } catch (SocketException e) {
                     client.close();
                     continue;
                 }
+
                 server.notifySubs(new Message(userChatName, formatMessage(msg)));
             }
 
@@ -56,6 +61,6 @@ public class AcceptedClientHandler implements Runnable {
     }
 
     private String formatMessage(String msg) {
-        return String.format("%s: %s\n", userName, msg);
+        return String.format("%s: %s", userName, msg);
     }
 }

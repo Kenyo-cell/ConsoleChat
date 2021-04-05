@@ -50,7 +50,9 @@ public class Server {
         handlers.add(handler);
         chatRooms.putIfAbsent(chatName, handlers);
 
-        logger.log(handler.getUserName() + " entered chat");
+        String msg = handler.getUserName() + " entered chat";
+        notifySubs(new Message(chatName, msg));
+        logger.log(msg);
     }
 
     public void removeFromChat(String chatName, AcceptedClientHandler handler) {
