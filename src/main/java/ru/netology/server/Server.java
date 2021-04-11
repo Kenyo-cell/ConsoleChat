@@ -51,7 +51,7 @@ public class Server {
         chatRooms.putIfAbsent(chatName, handlers);
 
         String msg = handler.getUserName() + " entered chat";
-        notifySubs(new Message(chatName, msg));
+        notifySubs(new Message(chatName, handler.getUserName(), msg));
         logger.log(msg);
     }
 
@@ -63,6 +63,7 @@ public class Server {
     public void notifySubs(Message msg) {
         logger.log(msg.getMsg());
         for (var handler : chatRooms.get(msg.getChatId())) {
+            if (handler.getUserName().equals(msg.getAuthor())) continue;
             handler.sendMsg(String.format("[%s]: %s", date.toString(), msg.getMsg()));
         }
     }

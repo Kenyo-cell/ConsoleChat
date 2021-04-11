@@ -44,12 +44,13 @@ public class AcceptedClientHandler implements Runnable {
                 String msg = "";
                 try {
                    msg = in.readLine();
+                   if (msg == null) throw new SocketException();
                 } catch (SocketException e) {
                     client.close();
                     continue;
                 }
 
-                server.notifySubs(new Message(userChatName, formatMessage(msg)));
+                server.notifySubs(new Message(userChatName, userName, formatMessage(msg)));
             }
 
             server.removeFromChat(userChatName, this);
