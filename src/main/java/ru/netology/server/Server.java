@@ -31,7 +31,8 @@ public class Server {
         try (JsonReader reader = new JsonReader(new FileReader(new File(path)))) {
             settings = new Gson().fromJson(reader, ServerSettings.class);
             logger = new FileLogger(loggerPath);
-        } catch (IOException e) { }
+        } catch (IOException e) {
+        }
     }
 
     public static Server getInstance() {
@@ -80,7 +81,6 @@ public class Server {
             }
         }
     }
-
 
 
     public static void main(String[] args) throws IOException {

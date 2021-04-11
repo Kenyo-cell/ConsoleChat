@@ -43,8 +43,8 @@ public class AcceptedClientHandler implements Runnable {
 
                 String msg = "";
                 try {
-                   msg = in.readLine();
-                   if (msg == null) throw new SocketException();
+                    msg = in.readLine();
+                    if (msg == null) throw new SocketException();
                 } catch (SocketException e) {
                     client.close();
                     continue;

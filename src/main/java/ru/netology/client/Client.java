@@ -12,20 +12,20 @@ import java.util.Scanner;
 public class Client {
     private static final String path = System.getProperty("user.dir") + "/ClientSettings.json";
     private static final String loggerPath = System.getProperty("user.dir") + "/";
-    private String name;
+    private String name = "user";
     private Socket socket;
     private ILogger logger;
     private ClientSettings settings;
     private final String SEPARATOR = ":";
     private final String END_MESSAGE = "*left chat*";
 
-    public Client() throws IOException {
+    public Client() {
         try (JsonReader reader = new JsonReader(new FileReader(new File(path)))) {
             settings = new Gson().fromJson(reader, ClientSettings.class);
+            socket = new Socket(settings.getHost(), settings.getPort());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        socket = new Socket(settings.getHost(), settings.getPort());
     }
 
     public void getMsg() {
@@ -35,10 +35,11 @@ public class Client {
                 logger.log("Received message: %s".formatted(msg));
                 System.out.println(msg);
             }
-        } catch (IOException e) { }
+        } catch (IOException e) {
+        }
     }
 
-    private void run() throws IOException {
+    public void run(){
         try (PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              Scanner scanner = new Scanner(System.in)) {
 
@@ -70,15 +71,13 @@ public class Client {
                 out.println(msg);
             }
             logger.log("%s end".formatted(name));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    public static void main(String[] args){
-        try {
-            Client client = new Client();
-            client.run();
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+    public static void main(String[] args) {
+        Client client = new Client();
+        client.run();
     }
 }
