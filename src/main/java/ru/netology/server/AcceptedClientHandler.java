@@ -33,9 +33,9 @@ public class AcceptedClientHandler implements Runnable {
     public void run() {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()))) {
             out = new PrintWriter(client.getOutputStream(), true);
-            String[] userInfo = in.readLine().trim().split(SEPARATOR);
-            userName = userInfo[0];
-            userChatName = userInfo[1];
+            String info = in.readLine();
+            userName = info.split(SEPARATOR)[0];
+            userChatName = info.split(SEPARATOR)[1];
 
             server.enterChat(userChatName, this);
 

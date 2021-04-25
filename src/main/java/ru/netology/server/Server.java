@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class Server {
+public class Server implements Runnable {
     private ConcurrentMap<String, List<AcceptedClientHandler>> chatRooms;
     private ExecutorService pool;
     private Date date;
@@ -23,6 +23,7 @@ public class Server {
     private static ServerSettings settings = null;
     private static final String path = System.getProperty("user.dir") + "/ServerSettings.json";
     private static final String loggerPath = System.getProperty("user.dir") + "/serverLog.log";
+    private volatile ServerSocket server;
 
     private Server() {
         pool = Executors.newCachedThreadPool();
@@ -69,21 +70,30 @@ public class Server {
         }
     }
 
-    public void run() throws IOException {
-        ServerSocket server = new ServerSocket(settings.getPort());
-        logger.log("Server start");
-        while (true) {
-            try {
+    @Override
+    public void run()  {
+        try {
+            server = new ServerSocket(settings.getPort());
+            logger.log("Server start");
+            while (!server.isClosed()) {
                 Socket client = server.accept();
                 pool.submit(new Thread(new AcceptedClientHandler(client)));
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void shutdownServer() {
+        try {
+            server.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Server server = Server.getInstance();
         server.run();
     }

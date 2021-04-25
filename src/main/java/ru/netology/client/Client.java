@@ -9,7 +9,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client {
+public class Client implements Runnable {
     private static final String path = System.getProperty("user.dir") + "/ClientSettings.json";
     private static final String loggerPath = System.getProperty("user.dir") + "/";
     private String name = "user";
@@ -39,6 +39,7 @@ public class Client {
         }
     }
 
+    @Override
     public void run(){
         try (PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              Scanner scanner = new Scanner(System.in)) {
